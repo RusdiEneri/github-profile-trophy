@@ -2,13 +2,14 @@ import { Card } from "../src/card.ts";
 import { CONSTANTS, parseParams } from "../src/utils.ts";
 import { COLORS, Theme } from "../src/theme.ts";
 import { Error400 } from "../src/error_page.ts";
-import "@std/dotenv/load";
+import "https://deno.land/std@0.224.0/dotenv/load.ts";
 import { staticRenderRegeneration } from "../src/StaticRenderRegeneration/index.ts";
 import { GithubRepositoryService } from "../src/Repository/GithubRepository.ts";
 import { GithubApiService } from "../src/Services/GithubApiService.ts";
 import { ServiceError } from "../src/Types/index.ts";
 import { ErrorPage } from "../src/pages/Error.ts";
 import { cacheProvider } from "../src/config/cache.ts";
+import { allowedUsers } from "./allowedUsers.ts";
 
 const serviceProvider = new GithubApiService();
 const client = new GithubRepositoryService(serviceProvider).repository;
@@ -39,6 +40,19 @@ export default (request: Request) =>
 async function app(req: Request): Promise<Response> {
   const params = parseParams(req);
   const username = params.get("username");
+
+// 🔒 Allowed users validation
+if (username !== null && !allowedUsers.includes(username)) {
+  return new Response("Unauthorized user", {
+    status: 403,
+    headers: new Headers({
+      "Content-Type": "text/plain",
+      "Cache-Control": cacheControlHeader,
+    }),
+  });
+}
+
+  
   const row = params.getNumberValue("row", CONSTANTS.DEFAULT_MAX_ROW);
   const column = params.getNumberValue("column", CONSTANTS.DEFAULT_MAX_COLUMN);
   const themeParam: string = params.getStringValue("theme", "default");
