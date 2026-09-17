@@ -39,6 +39,19 @@ export default (request: Request) =>
 async function app(req: Request): Promise<Response> {
   const params = parseParams(req);
   const username = params.get("username");
+
+  // 🔒 Validación de usuario permitido
+  const allowedUser = "mriscoc";
+  if (username !== allowedUser) {
+    return new Response("Usuario no autorizado", {
+      status: 403,
+      headers: new Headers({
+        "Content-Type": "text/plain",
+        "Cache-Control": cacheControlHeader,
+      }),
+    });
+  }  
+  
   const row = params.getNumberValue("row", CONSTANTS.DEFAULT_MAX_ROW);
   const column = params.getNumberValue("column", CONSTANTS.DEFAULT_MAX_COLUMN);
   const themeParam: string = params.getStringValue("theme", "default");
