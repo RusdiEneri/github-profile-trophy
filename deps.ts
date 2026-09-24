@@ -1,20 +1,23 @@
-import { Soxa as ServiceProvider } from "soxa/src/core/Soxa.ts";
-import { defaults } from "soxa/src/defaults.ts";
+import { Soxa as ServiceProvider } from "https://deno.land/x/soxa@1.4/src/core/Soxa.ts";
+import { defaults } from "https://deno.land/x/soxa@1.4/src/defaults.ts";
 
-import { assertEquals, assertRejects } from "@std/assert";
+import {
+  assertEquals,
+  assertRejects,
+} from "https://deno.land/std@0.203.0/assert/mod.ts";
 
 import {
   assertSpyCalls,
   returnsNext,
   spy,
   stub,
-} from "@std/testing/mock";
+} from "https://deno.land/std@0.203.0/testing/mock.ts";
 
 export {
   type Bulk,
   connect,
   type Redis,
-} from "redis";
+} from "https://deno.land/x/redis@v0.31.0/mod.ts";
 
 import { CONSTANTS } from "./src/utils.ts";
 

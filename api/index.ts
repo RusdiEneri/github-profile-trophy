@@ -2,7 +2,6 @@ import { Card } from "../src/card.ts";
 import { CONSTANTS, parseParams } from "../src/utils.ts";
 import { COLORS, Theme } from "../src/theme.ts";
 import { Error400 } from "../src/error_page.ts";
-import "@std/dotenv/load";
 import { staticRenderRegeneration } from "../src/StaticRenderRegeneration/index.ts";
 import { GithubRepositoryService } from "../src/Repository/GithubRepository.ts";
 import { GithubApiService } from "../src/Services/GithubApiService.ts";
@@ -28,13 +27,29 @@ const defaultHeaders = new Headers(
   },
 );
 
-export default (request: Request) =>
-  staticRenderRegeneration(request, {
-    revalidate: CONSTANTS.REVALIDATE_TIME,
-    headers: defaultHeaders,
-  }, function (req: Request) {
-    return app(req);
-  });
+export default async (request: Request) => {
+  try {
+    return await staticRenderRegeneration(request, {
+      revalidate: CONSTANTS.REVALIDATE_TIME,
+      headers: defaultHeaders,
+    }, function (req: Request) {
+      return app(req);
+    });
+  } catch (error) {
+    console.error("Function invocation error:", error);
+    return new Response(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="120" viewBox="0 0 400 120">
+        <rect width="100%" height="100%" fill="#24292e" rx="6"/>
+        <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="#ff6b6b" font-family="sans-serif" font-size="14" font-weight="bold">Failed to render trophies</text>
+        <text x="50%" y="70%" dominant-baseline="middle" text-anchor="middle" fill="#8b949e" font-family="sans-serif" font-size="11">${error instanceof Error ? error.message : "Internal Error"}</text>
+      </svg>`,
+      {
+        status: 500,
+        headers: { "Content-Type": "image/svg+xml" },
+      },
+    );
+  }
+};
 
 async function app(req: Request): Promise<Response> {
   const params = parseParams(req);
