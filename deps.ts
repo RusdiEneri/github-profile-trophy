@@ -1,5 +1,5 @@
-import { Soxa as ServiceProvider } from "@soxa";
-import { defaults } from "@soxa/defaults";
+import { Soxa as ServiceProvider } from "soxa/src/core/Soxa.ts";
+import { defaults } from "soxa/src/defaults.ts";
 
 import { assertEquals, assertRejects } from "@std/assert";
 
@@ -14,7 +14,7 @@ export {
   type Bulk,
   connect,
   type Redis,
-} from "@redis";
+} from "redis";
 
 import { CONSTANTS } from "./src/utils.ts";
 
